@@ -96,8 +96,5 @@ int main(){
     node_vector[5].print();
     cout << endl;
   
-
-    cout << endl;
-
     return 0;
 }
