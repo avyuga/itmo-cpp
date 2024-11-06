@@ -29,6 +29,14 @@ int main(){
 
     cout << endl;
 
+    cout << ">>> Testing Different Assign operations" << endl;
+    node_v2 = node;
+    node_v2.print(); 
+
+    node_v3 = move(node_v3);
+    node_v3.print();
+    cout << endl;
+
     cout << ">>> C-style arrays & operations" << endl;
 
     int list_length = 7;
