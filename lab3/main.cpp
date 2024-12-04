@@ -159,7 +159,7 @@ int main(){
         l2.erase(begin, end);
     }
     auto binary_op = [](const GraphNode& a, const GraphNode& b){return make_pair(a, b);};
-    transform(l2.rbegin(), l2.rend(), l1.rbegin(), back_inserter(pairs_from_lists), binary_op);
+    transform(l2.begin(), l2.end(), l1.begin(), back_inserter(pairs_from_lists), binary_op);
 
     for (auto p: pairs_from_lists){
         cout << format("GraphNode with value={} & GraphNode with value={}", p.first.value, p.second.value) << endl;
