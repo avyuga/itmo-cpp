@@ -78,8 +78,8 @@ int main(){
 
 
     int topN = 3;
-    cout << "3. Sort V1 and create a list L1 with " << topN << " top elements from V1" << endl;
-    sort(v1.begin(), v1.end(), GraphNode::cmp_increase);
+    cout << "3. Create a list L1 with " << topN << " top elements from V1" << endl;
+    partial_sort(v1.begin(), v1.begin()+topN, v1.end(), GraphNode::cmp_increase);
     list<GraphNode> l1(v1.begin(), v1.begin()+topN);
 
     for (auto iter = l1.begin(); iter != l1.end(); iter++) iter -> print();
@@ -88,8 +88,8 @@ int main(){
 
 
     int leastN = 4;
-    cout << "4. Sort V2 and create a list L2 with " << leastN << " least elements from V2" << endl;
-    sort(v2.begin(), v2.end(), GraphNode::cmp_decrease);
+    cout << "4. Create a list L2 with " << leastN << " least elements from V2" << endl;
+    nth_element(v2.begin(), v2.begin()+leastN, v2.end(), GraphNode::cmp_decrease);
     list<GraphNode> l2(v2.begin(), v2.begin()+leastN);
 
     for (auto iter = l2.begin(); iter != l2.end(); iter++) iter -> print();
