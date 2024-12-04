@@ -78,7 +78,7 @@ int main(){
 
 
     int topN = 3;
-    cout << "3. Sort V1 and create a list L1 with " << topN << " top elements from V2" << endl;
+    cout << "3. Sort V1 and create a list L1 with " << topN << " top elements from V1" << endl;
     sort(v1.begin(), v1.end(), GraphNode::cmp_increase);
     list<GraphNode> l1(v1.begin(), v1.begin()+topN);
 
