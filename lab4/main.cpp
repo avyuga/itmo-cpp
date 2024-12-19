@@ -147,19 +147,13 @@ int main(){
 
     cout << "Matrix power (non-integer, for example 0.5) test:" << endl;
     vector<vector<double>> m3 = {
-        {0, 0, 0.01, 0, 0, 0.01, 0, 0, 0, 0}, 
-        {-0.02, 0, 0.04, 0, 0, 0, 0, 0, -0.01, 0}, 
-        {0, 0.03, 0, -0.14, 0, 0, 0, 0.02, 0, 0}, 
-        {-0.05, -0.09, 0, -0.1, 0, 0.03, 0, 0, 0, 0.07},
-        {0, -0.01, 0, -0.2, 0, 0, 0, 0, 0.01, 0},
-        {0.01, 0, 0, 0, 0, 0, 0, -0.01, 0, 0},
-        {0, 0.02, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0.01, 0, 0, 0, 0, 0, 0.01, 0},
-        {0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0.07, 0, 0}
+        {0.8, 0, 0, 0}, 
+        {0, 0.9, 0, 0}, 
+        {0, 0, 0.99, 0}, 
+        {0, 0, 0, 0.9}
     };
 
-    SparseMatrix sm3 = SparseMatrix<double>(m3, 10, 10);
+    SparseMatrix sm3 = SparseMatrix<double>(m3, 4, 4);
     Eigen::MatrixXd m3_eigen = convert_to_eigen<double>(m3);
     Eigen::MatrixXd m3_sparse = m3_eigen.sparseView();
 
@@ -174,7 +168,6 @@ int main(){
     timer.tic();
     auto power_result_eigen = m3_eigen.pow(p);
     cout << timer.toc() << " mcs" << endl;
-
 
     cout << "\nFinished successfully!" << endl;
 

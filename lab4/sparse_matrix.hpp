@@ -97,7 +97,7 @@ template <typename T> class SparseMatrix{
             return *new SparseMatrix<T>(data, this->height, this->width);
         };
 
-        virtual SparseMatrix<T>& operator*(int val){
+        virtual SparseMatrix<T>& operator*(T val){
             map<int, T> data;  
             transform(this->data.begin(), this->data.end(), inserter(data, data.end()),
                 [val](pair<const int, T>& c){return make_pair(c.first, c.second * val);}
@@ -167,7 +167,7 @@ template<typename T> SparseMatrix<T>& matrix_power(SparseMatrix<T>& sm, int val)
     return temp;
 };
 
-template<typename T> SparseMatrix<T>& matrix_exp(SparseMatrix<T>& A, int terms = 5) {
+template<typename T> SparseMatrix<T>& matrix_exp(SparseMatrix<T>& A, int terms = 10) {
     assert(A.width == A.height);
     
     SparseMatrix<T>& result = *new SparseMatrix<T>();
@@ -195,7 +195,7 @@ template<typename T> SparseMatrix<T>& matrix_exp(SparseMatrix<T>& A, int terms =
     return result;
 }
 
-template<typename T> SparseMatrix<T>& matrix_log(SparseMatrix<T>& A, int terms = 5) {
+template<typename T> SparseMatrix<T>& matrix_log(SparseMatrix<T>& A, int terms = 10) {
     assert(A.width == A.height);
     
     SparseMatrix<T>& result = *new SparseMatrix<T>();
@@ -224,7 +224,7 @@ template<typename T> SparseMatrix<T>& matrix_log(SparseMatrix<T>& A, int terms =
     return result;
 }
 
-template<typename T> SparseMatrix<T>& matrix_power_real(SparseMatrix<T>& A, double power, int terms = 5) {
+template<typename T> SparseMatrix<T>& matrix_power_real(SparseMatrix<T>& A, double power, int terms = 10) {
     assert(A.width == A.height);
     
     auto log_A = matrix_log(A, terms);
