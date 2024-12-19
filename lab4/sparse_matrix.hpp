@@ -167,4 +167,70 @@ template<typename T> SparseMatrix<T>& matrix_power(SparseMatrix<T>& sm, int val)
     return temp;
 };
 
+template<typename T> SparseMatrix<T>& matrix_exp(SparseMatrix<T>& A, int terms = 5) {
+    assert(A.width == A.height);
+    
+    SparseMatrix<T>& result = *new SparseMatrix<T>();
+    result.height = A.height;
+    result.width = A.width;
+    for(int i = 0; i < A.height; i++) {
+        result.data[i * A.width + i] = 1;
+    }
+    
+    SparseMatrix<T>& term = *new SparseMatrix<T>();
+    term.height = A.height;
+    term.width = A.width;
+    for(int i = 0; i < A.height; i++) {
+        term.data[i * A.width + i] = 1;
+    }
+    
+    T factorial = 1;
+    for(int i = 1; i <= terms; i++) {
+        term = dot(term, A);
+        factorial *= i;
+        auto scaled_term = term * (1.0/factorial);
+        result = result + scaled_term;
+    }
+    
+    return result;
+}
+
+template<typename T> SparseMatrix<T>& matrix_log(SparseMatrix<T>& A, int terms = 5) {
+    assert(A.width == A.height);
+    
+    SparseMatrix<T>& result = *new SparseMatrix<T>();
+    result.height = A.height;
+    result.width = A.width;
+    
+    SparseMatrix<T>& X = *new SparseMatrix<T>();
+    X.height = A.height;
+    X.width = A.width;
+    X = A;
+    for(int i = 0; i < A.height; i++) {
+        int idx = i * A.width + i;
+        X.data[idx] = (X.data.count(idx) ? X.data[idx] : 0) - 1;
+    }
+    
+    // Calculate log series: ln(I + X) = X - X²/2 + X³/3 - X⁴/4 + ...
+    SparseMatrix<T>& term = X;
+    result = X;
+    
+    for(int i = 2; i <= terms; i++) {
+        term = dot(term, X);
+        auto scaled_term = term * (((i % 2 == 0) ? -1.0 : 1.0) / i);
+        result = result + scaled_term;
+    }
+    
+    return result;
+}
+
+template<typename T> SparseMatrix<T>& matrix_power_real(SparseMatrix<T>& A, double power, int terms = 5) {
+    assert(A.width == A.height);
+    
+    auto log_A = matrix_log(A, terms);
+    auto scaled_log = log_A * power;
+    return matrix_exp(scaled_log, terms);
+}
+
+
 #endif

@@ -4,13 +4,14 @@
 
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
+#include <unsupported/Eigen/MatrixFunctions>
 
 
 using namespace std;    
 
-
-Eigen::MatrixXi& convert_to_eigen(vector<vector<int>> m){
-    Eigen::MatrixXi& m1_eigen = *new Eigen::MatrixXi(m.size(), m[0].size());
+template<typename T>
+Eigen::Matrix<T, -1, -1>& convert_to_eigen(vector<vector<T>> m){
+    Eigen::Matrix<T, -1, -1>& m1_eigen = *new Eigen::Matrix<T, -1, -1>(m.size(), m[0].size());
     for(size_t i = 0; i < m.size(); ++i) {
         for(size_t j = 0; j < m[i].size(); ++j) {
             m1_eigen(i, j) = m[i][j];
@@ -38,7 +39,7 @@ int main(){
 
     };
 
-    Eigen::MatrixXi m1_eigen = convert_to_eigen(m1);
+    Eigen::MatrixXi m1_eigen = convert_to_eigen<int>(m1);
     Eigen::SparseMatrix<int> m1_sparse = m1_eigen.sparseView();
 
     SparseMatrix sm = SparseMatrix<int>(m1, 10, 10);
@@ -58,12 +59,12 @@ int main(){
         {0, 0, 0, 0, 0, 1, 0, 0, 0, 0}
 
     };
-    Eigen::MatrixXi m2_eigen = convert_to_eigen(m2);
+    Eigen::MatrixXi m2_eigen = convert_to_eigen<int>(m2);
     Eigen::SparseMatrix<int> m2_sparse = m2_eigen.sparseView(); 
 
     SparseMatrix sm2 = SparseMatrix<int>(m2, 10, 10);
 
-    cout << "Operations of multiplication and summarization" << endl;
+    cout << "\nOperations of multiplication and summarization" << endl;
     auto summ = sm * 3 + sm2*(-1);
     summ.print();
     cout << endl;
@@ -116,23 +117,66 @@ int main(){
     cout << "Dot product of matrixes" << endl;  
     cout << " * Using Custom SparseMatrix took ";  
     timer.tic();
-    auto res = dot(sm, smT);
-    auto diff = timer.toc();
-    cout << diff << " mcs" << endl;
+    auto res = dot(sm, sm2.transpose());
+    cout << timer.toc() << " mcs" << endl;
 
     cout << " * Using Eigen Dense Matrix took ";  
     timer.tic();
     auto res3 = m1_eigen * m2_eigen.transpose();
-    diff = timer.toc();
-    cout << diff << " mcs" << endl;
+    cout << timer.toc() << " mcs" << endl;
 
     cout << " * Using Eigen Sparse Matrix took ";  
     timer.tic();
     auto res2 = m1_sparse * m2_sparse.transpose();
-    diff = timer.toc();
-    cout << diff << " mcs" << endl;
+    cout << timer.toc() << " mcs" << endl;
+    cout << endl;
+
+
+    cout << "Matrix exponential test:" << endl;
+    cout << " * Using Custom SparseMatrix took ";
+    timer.tic();
+    auto exp_result = matrix_exp(sm);
+    cout << timer.toc() << " mcs" << endl;
+
+    cout << " * Using Eigen Dense Matrix took ";
+    timer.tic();
+    auto exp_result_eigen = m1_eigen.exp();
+    cout << timer.toc() << " mcs" << endl;
+
+    cout << endl;
+
+    cout << "Matrix power (non-integer, for example 0.5) test:" << endl;
+    vector<vector<double>> m3 = {
+        {0, 0, 0.01, 0, 0, 0.01, 0, 0, 0, 0}, 
+        {-0.02, 0, 0.04, 0, 0, 0, 0, 0, -0.01, 0}, 
+        {0, 0.03, 0, -0.14, 0, 0, 0, 0.02, 0, 0}, 
+        {-0.05, -0.09, 0, -0.1, 0, 0.03, 0, 0, 0, 0.07},
+        {0, -0.01, 0, -0.2, 0, 0, 0, 0, 0.01, 0},
+        {0.01, 0, 0, 0, 0, 0, 0, -0.01, 0, 0},
+        {0, 0.02, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0.01, 0, 0, 0, 0, 0, 0.01, 0},
+        {0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0.07, 0, 0}
+    };
+
+    SparseMatrix sm3 = SparseMatrix<double>(m3, 10, 10);
+    Eigen::MatrixXd m3_eigen = convert_to_eigen<double>(m3);
+    Eigen::MatrixXd m3_sparse = m3_eigen.sparseView();
+
+    double p = 0.5;
+
+    cout << " * Using Custom SparseMatrix took ";  
+    timer.tic();
+    auto power_result = matrix_power_real(sm3, p); 
+    cout << timer.toc() << " mcs" << endl;
+
+    cout << " * Using Eigen Dense Matrix took ";
+    timer.tic();
+    auto power_result_eigen = m3_eigen.pow(p);
+    cout << timer.toc() << " mcs" << endl;
 
 
     cout << "\nFinished successfully!" << endl;
+
     return 0;
 }
